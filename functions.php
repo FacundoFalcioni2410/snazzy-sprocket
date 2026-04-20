@@ -454,29 +454,58 @@ function ss_register_acf_fields(): void {
         'title'  => 'Contact Information',
         'fields' => [
             [
-                'key'   => 'field_contact_address',
-                'label' => 'Address',
-                'name'  => 'contact_address',
-                'type'  => 'text',
+                'key'          => 'field_contact_email',
+                'label'        => 'Email Address',
+                'name'         => 'contact_email',
+                'type'         => 'email',
+                'default_value' => 'hello@snazzysprocket.com',
             ],
             [
-                'key'   => 'field_contact_email',
-                'label' => 'Email',
-                'name'  => 'contact_email',
-                'type'  => 'email',
+                'key'          => 'field_contact_phone',
+                'label'        => 'Phone',
+                'name'         => 'contact_phone',
+                'type'         => 'text',
+                'default_value' => '(215) 555-0147',
             ],
             [
-                'key'   => 'field_contact_phone',
-                'label' => 'Phone',
-                'name'  => 'contact_phone',
-                'type'  => 'text',
+                'key'          => 'field_contact_office',
+                'label'        => 'Office Address',
+                'name'         => 'contact_office',
+                'type'         => 'text',
+                'default_value' => '1247 Market Street, Suite 400, Philadelphia, PA 19107',
             ],
             [
-                'key'   => 'field_contact_cf7_shortcode',
-                'label' => 'Contact Form 7 Shortcode',
-                'name'  => 'contact_cf7_shortcode',
-                'type'  => 'text',
-                'instructions' => 'Paste your Contact Form 7 shortcode here, e.g. [contact-form-7 id="123"]',
+                'key'          => 'field_contact_hours',
+                'label'        => 'Business Hours',
+                'name'         => 'contact_hours',
+                'type'         => 'text',
+                'default_value' => 'Monday – Friday, 9:00 AM – 6:00 PM EST',
+            ],
+            [
+                'key'          => 'field_contact_map_embed',
+                'label'        => 'Map Embed Code',
+                'name'         => 'contact_map_embed',
+                'type'         => 'textarea',
+                'rows'         => 3,
+                'instructions' => 'Paste your Google Maps or Mapbox <iframe> embed code here.',
+            ],
+            [
+                'key'          => 'field_contact_twitter',
+                'label'        => 'Twitter / X URL',
+                'name'         => 'contact_twitter',
+                'type'         => 'url',
+            ],
+            [
+                'key'          => 'field_contact_linkedin',
+                'label'        => 'LinkedIn URL',
+                'name'         => 'contact_linkedin',
+                'type'         => 'url',
+            ],
+            [
+                'key'          => 'field_contact_dribbble',
+                'label'        => 'Dribbble URL',
+                'name'         => 'contact_dribbble',
+                'type'         => 'url',
             ],
         ],
         'location' => [
@@ -490,6 +519,42 @@ function ss_register_acf_fields(): void {
     ]);
 }
 add_action('acf/init', 'ss_register_acf_fields');
+
+// ─────────────────────────────────────────────
+// Contact form handler
+// ─────────────────────────────────────────────
+function ss_handle_contact_form(): void {
+    if (
+        !isset($_POST['ss_contact_nonce']) ||
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ss_contact_nonce'])), 'ss_contact_form')
+    ) {
+        return;
+    }
+
+    $first_name = sanitize_text_field($_POST['first_name'] ?? '');
+    $last_name  = sanitize_text_field($_POST['last_name']  ?? '');
+    $email      = sanitize_email($_POST['email']           ?? '');
+    $company    = sanitize_text_field($_POST['company']    ?? '');
+    $budget     = sanitize_text_field($_POST['budget']     ?? '');
+    $message    = sanitize_textarea_field($_POST['message'] ?? '');
+
+    if (empty($first_name) || empty($email) || empty($message)) {
+        set_transient('ss_contact_error_' . get_current_user_id(), 'Please fill in all required fields.', 60);
+        return;
+    }
+
+    $to      = get_option('admin_email');
+    $subject = "New project inquiry from {$first_name} {$last_name}";
+    $body    = "Name: {$first_name} {$last_name}\nEmail: {$email}\nCompany: {$company}\nBudget: {$budget}\n\nMessage:\n{$message}";
+    $headers = ["Reply-To: {$email}"];
+
+    wp_mail($to, $subject, $body, $headers);
+    set_transient('ss_contact_success_' . session_id(), true, 60);
+
+    wp_safe_redirect(add_query_arg('sent', '1', get_permalink()));
+    exit;
+}
+add_action('init', 'ss_handle_contact_form');
 
 // ─────────────────────────────────────────────
 // Flush rewrite rules on activation

@@ -57,7 +57,7 @@
   }
 
   .filter-btn.active {
-    @apply bg-ink text-white border-ink;
+    @apply bg-ink text-accent border-ink;
   }
 
   /* ── Section labels ───────────────────── */

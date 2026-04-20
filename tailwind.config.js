@@ -45,6 +45,7 @@ module.exports = {
         '3xl': ['32px', { lineHeight: '1.2' }],
         '4xl': ['40px', { lineHeight: '1.1' }],
         '5xl': ['56px', { lineHeight: '1.05' }],
+        'hero': ['62px', { lineHeight: '1.02', fontWeight: '800' }],
       },
       maxWidth: {
         site: '1200px',

@@ -27,8 +27,8 @@ if (empty($stats)) {
             <div>
                 <p class="section-label">Award-Winning Digital Agency</p>
 
-                <h1 class="font-display font-extrabold text-white leading-[1.05] mb-6
-                            text-4xl sm:text-5xl lg:text-6xl">
+                <h1 class="font-display font-extrabold text-white leading-[1.02] mb-6
+                            text-4xl sm:text-5xl lg:text-hero">
                     <?php echo wp_kses($headline, ['span' => ['class' => []]]); ?>
                 </h1>
 

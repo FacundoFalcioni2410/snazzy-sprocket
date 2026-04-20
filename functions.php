@@ -300,6 +300,31 @@ function ss_register_acf_fields(): void {
                 'preview_size'  => 'large',
             ],
             [
+                'key'        => 'field_stats',
+                'label'      => 'Hero Stats',
+                'name'       => 'stats',
+                'type'       => 'repeater',
+                'min'        => 0,
+                'max'        => 4,
+                'layout'     => 'table',
+                'button_label' => 'Add Stat',
+                'instructions' => 'Up to 4 stats shown in the hero right column (e.g. 120+, Projects Delivered)',
+                'sub_fields' => [
+                    [
+                        'key'   => 'field_stat_number',
+                        'label' => 'Number / Value',
+                        'name'  => 'stat_number',
+                        'type'  => 'text',
+                    ],
+                    [
+                        'key'   => 'field_stat_label',
+                        'label' => 'Label',
+                        'name'  => 'stat_label',
+                        'type'  => 'text',
+                    ],
+                ],
+            ],
+            [
                 'key'        => 'field_services',
                 'label'      => 'Services',
                 'name'       => 'services',

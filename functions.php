@@ -1,0 +1,475 @@
+<?php
+/**
+ * Snazzy Sprocket Theme Functions
+ */
+
+// ─────────────────────────────────────────────
+// Theme Setup
+// ─────────────────────────────────────────────
+function ss_theme_setup(): void {
+    add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');
+    add_theme_support('html5', ['search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script']);
+    add_theme_support('editor-styles');
+    add_theme_support('wp-block-styles');
+    add_theme_support('align-wide');
+
+    register_nav_menus([
+        'primary' => __('Primary Navigation', 'snazzy-sprocket'),
+        'footer'  => __('Footer Navigation', 'snazzy-sprocket'),
+    ]);
+}
+add_action('after_setup_theme', 'ss_theme_setup');
+
+// ─────────────────────────────────────────────
+// Enqueue Assets
+// ─────────────────────────────────────────────
+function ss_enqueue_assets(): void {
+    // Google Fonts
+    wp_enqueue_style(
+        'ss-google-fonts',
+        'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap',
+        [],
+        null
+    );
+
+    // Compiled Tailwind CSS
+    wp_enqueue_style(
+        'ss-styles',
+        get_template_directory_uri() . '/dist/css/app.css',
+        ['ss-google-fonts'],
+        filemtime(get_template_directory() . '/dist/css/app.css')
+    );
+
+    // Theme JS
+    wp_enqueue_script(
+        'ss-scripts',
+        get_template_directory_uri() . '/dist/js/app.js',
+        [],
+        filemtime(get_template_directory() . '/dist/js/app.js'),
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'ss_enqueue_assets');
+
+// ─────────────────────────────────────────────
+// Custom Post Types
+// ─────────────────────────────────────────────
+function ss_register_post_types(): void {
+    // Case Studies
+    register_post_type('case_study', [
+        'labels' => [
+            'name'               => __('Case Studies', 'snazzy-sprocket'),
+            'singular_name'      => __('Case Study', 'snazzy-sprocket'),
+            'add_new'            => __('Add New Case Study', 'snazzy-sprocket'),
+            'add_new_item'       => __('Add New Case Study', 'snazzy-sprocket'),
+            'edit_item'          => __('Edit Case Study', 'snazzy-sprocket'),
+            'new_item'           => __('New Case Study', 'snazzy-sprocket'),
+            'view_item'          => __('View Case Study', 'snazzy-sprocket'),
+            'search_items'       => __('Search Case Studies', 'snazzy-sprocket'),
+            'not_found'          => __('No case studies found', 'snazzy-sprocket'),
+            'not_found_in_trash' => __('No case studies found in Trash', 'snazzy-sprocket'),
+            'menu_name'          => __('Case Studies', 'snazzy-sprocket'),
+        ],
+        'public'             => true,
+        'has_archive'        => true,
+        'rewrite'            => ['slug' => 'case-studies'],
+        'supports'           => ['title', 'editor', 'thumbnail', 'excerpt'],
+        'show_in_rest'       => true,
+        'menu_icon'          => 'dashicons-portfolio',
+        'menu_position'      => 5,
+    ]);
+
+    // Team Members
+    register_post_type('team_member', [
+        'labels' => [
+            'name'               => __('Team Members', 'snazzy-sprocket'),
+            'singular_name'      => __('Team Member', 'snazzy-sprocket'),
+            'add_new'            => __('Add New Team Member', 'snazzy-sprocket'),
+            'add_new_item'       => __('Add New Team Member', 'snazzy-sprocket'),
+            'edit_item'          => __('Edit Team Member', 'snazzy-sprocket'),
+            'new_item'           => __('New Team Member', 'snazzy-sprocket'),
+            'view_item'          => __('View Team Member', 'snazzy-sprocket'),
+            'search_items'       => __('Search Team Members', 'snazzy-sprocket'),
+            'not_found'          => __('No team members found', 'snazzy-sprocket'),
+            'not_found_in_trash' => __('No team members found in Trash', 'snazzy-sprocket'),
+            'menu_name'          => __('Team', 'snazzy-sprocket'),
+        ],
+        'public'        => true,
+        'has_archive'   => false,
+        'rewrite'       => ['slug' => 'team'],
+        'supports'      => ['title', 'thumbnail'],
+        'show_in_rest'  => true,
+        'menu_icon'     => 'dashicons-groups',
+        'menu_position' => 6,
+    ]);
+}
+add_action('init', 'ss_register_post_types');
+
+// ─────────────────────────────────────────────
+// Taxonomies
+// ─────────────────────────────────────────────
+function ss_register_taxonomies(): void {
+    // Industry
+    register_taxonomy('industry', ['case_study'], [
+        'labels' => [
+            'name'              => __('Industries', 'snazzy-sprocket'),
+            'singular_name'     => __('Industry', 'snazzy-sprocket'),
+            'search_items'      => __('Search Industries', 'snazzy-sprocket'),
+            'all_items'         => __('All Industries', 'snazzy-sprocket'),
+            'edit_item'         => __('Edit Industry', 'snazzy-sprocket'),
+            'update_item'       => __('Update Industry', 'snazzy-sprocket'),
+            'add_new_item'      => __('Add New Industry', 'snazzy-sprocket'),
+            'new_item_name'     => __('New Industry Name', 'snazzy-sprocket'),
+            'menu_name'         => __('Industries', 'snazzy-sprocket'),
+        ],
+        'hierarchical'      => true,
+        'public'            => true,
+        'show_in_rest'      => true,
+        'rewrite'           => ['slug' => 'industry'],
+        'show_admin_column' => true,
+    ]);
+
+    // Technology
+    register_taxonomy('technology', ['case_study'], [
+        'labels' => [
+            'name'              => __('Technologies', 'snazzy-sprocket'),
+            'singular_name'     => __('Technology', 'snazzy-sprocket'),
+            'search_items'      => __('Search Technologies', 'snazzy-sprocket'),
+            'all_items'         => __('All Technologies', 'snazzy-sprocket'),
+            'edit_item'         => __('Edit Technology', 'snazzy-sprocket'),
+            'update_item'       => __('Update Technology', 'snazzy-sprocket'),
+            'add_new_item'      => __('Add New Technology', 'snazzy-sprocket'),
+            'new_item_name'     => __('New Technology Name', 'snazzy-sprocket'),
+            'menu_name'         => __('Technologies', 'snazzy-sprocket'),
+        ],
+        'hierarchical'      => false,
+        'public'            => true,
+        'show_in_rest'      => true,
+        'rewrite'           => ['slug' => 'technology'],
+        'show_admin_column' => true,
+    ]);
+}
+add_action('init', 'ss_register_taxonomies');
+
+// ─────────────────────────────────────────────
+// ACF Field Groups (programmatic registration)
+// ─────────────────────────────────────────────
+function ss_register_acf_fields(): void {
+    if (!function_exists('acf_add_local_field_group')) {
+        return;
+    }
+
+    // ── Case Study Fields ──────────────────────
+    acf_add_local_field_group([
+        'key'      => 'group_case_study',
+        'title'    => 'Case Study Details',
+        'fields'   => [
+            [
+                'key'   => 'field_client_name',
+                'label' => 'Client Name',
+                'name'  => 'client_name',
+                'type'  => 'text',
+            ],
+            [
+                'key'           => 'field_hero_image',
+                'label'         => 'Hero Image',
+                'name'          => 'hero_image',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+            ],
+            [
+                'key'   => 'field_challenge',
+                'label' => 'Challenge',
+                'name'  => 'challenge',
+                'type'  => 'textarea',
+                'rows'  => 4,
+            ],
+            [
+                'key'   => 'field_solution',
+                'label' => 'Solution',
+                'name'  => 'solution',
+                'type'  => 'textarea',
+                'rows'  => 4,
+            ],
+            [
+                'key'   => 'field_results',
+                'label' => 'Results',
+                'name'  => 'results',
+                'type'  => 'textarea',
+                'rows'  => 4,
+            ],
+            [
+                'key'          => 'field_is_featured',
+                'label'        => 'Feature on Homepage',
+                'name'         => 'is_featured',
+                'type'         => 'true_false',
+                'ui'           => 1,
+                'instructions' => 'Toggle on to show this case study in the homepage featured section.',
+            ],
+        ],
+        'location' => [
+            [['param' => 'post_type', 'operator' => '==', 'value' => 'case_study']],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ]);
+
+    // ── Team Member Fields ─────────────────────
+    acf_add_local_field_group([
+        'key'    => 'group_team_member',
+        'title'  => 'Team Member Details',
+        'fields' => [
+            [
+                'key'   => 'field_role',
+                'label' => 'Role / Title',
+                'name'  => 'role',
+                'type'  => 'text',
+            ],
+            [
+                'key'           => 'field_photo',
+                'label'         => 'Photo',
+                'name'          => 'photo',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'medium',
+            ],
+            [
+                'key'   => 'field_bio',
+                'label' => 'Bio',
+                'name'  => 'bio',
+                'type'  => 'textarea',
+                'rows'  => 3,
+            ],
+            [
+                'key'   => 'field_linkedin_url',
+                'label' => 'LinkedIn URL',
+                'name'  => 'linkedin_url',
+                'type'  => 'url',
+            ],
+        ],
+        'location' => [
+            [['param' => 'post_type', 'operator' => '==', 'value' => 'team_member']],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ]);
+
+    // ── Homepage Fields ────────────────────────
+    acf_add_local_field_group([
+        'key'    => 'group_homepage',
+        'title'  => 'Homepage Content',
+        'fields' => [
+            [
+                'key'   => 'field_hero_headline',
+                'label' => 'Hero Headline',
+                'name'  => 'hero_headline',
+                'type'  => 'text',
+            ],
+            [
+                'key'   => 'field_hero_subheadline',
+                'label' => 'Hero Subheadline',
+                'name'  => 'hero_subheadline',
+                'type'  => 'text',
+            ],
+            [
+                'key'   => 'field_hero_cta_label',
+                'label' => 'Hero CTA Button Label',
+                'name'  => 'hero_cta_label',
+                'type'  => 'text',
+            ],
+            [
+                'key'   => 'field_hero_cta_url',
+                'label' => 'Hero CTA Button URL',
+                'name'  => 'hero_cta_url',
+                'type'  => 'url',
+            ],
+            [
+                'key'           => 'field_hero_bg_image',
+                'label'         => 'Hero Background Image',
+                'name'          => 'hero_bg_image',
+                'type'          => 'image',
+                'return_format' => 'array',
+                'preview_size'  => 'large',
+            ],
+            [
+                'key'        => 'field_services',
+                'label'      => 'Services',
+                'name'       => 'services',
+                'type'       => 'repeater',
+                'min'        => 1,
+                'max'        => 6,
+                'layout'     => 'block',
+                'button_label' => 'Add Service',
+                'sub_fields' => [
+                    [
+                        'key'   => 'field_service_title',
+                        'label' => 'Service Title',
+                        'name'  => 'service_title',
+                        'type'  => 'text',
+                    ],
+                    [
+                        'key'   => 'field_service_desc',
+                        'label' => 'Service Description',
+                        'name'  => 'service_desc',
+                        'type'  => 'textarea',
+                        'rows'  => 3,
+                    ],
+                    [
+                        'key'           => 'field_service_icon',
+                        'label'         => 'Service Icon',
+                        'name'          => 'service_icon',
+                        'type'          => 'image',
+                        'return_format' => 'array',
+                        'preview_size'  => 'thumbnail',
+                        'instructions'  => 'Upload an SVG or PNG icon (recommended: 64×64px)',
+                    ],
+                ],
+            ],
+        ],
+        'location' => [
+            [['param' => 'page_type', 'operator' => '==', 'value' => 'front_page']],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ]);
+
+    // ── About Page Fields ──────────────────────
+    acf_add_local_field_group([
+        'key'    => 'group_about_page',
+        'title'  => 'About Page Content',
+        'fields' => [
+            [
+                'key'   => 'field_agency_headline',
+                'label' => 'Agency Headline',
+                'name'  => 'agency_headline',
+                'type'  => 'text',
+            ],
+            [
+                'key'           => 'field_agency_story',
+                'label'         => 'Agency Story',
+                'name'          => 'agency_story',
+                'type'          => 'wysiwyg',
+                'tabs'          => 'all',
+                'toolbar'       => 'full',
+                'media_upload'  => 1,
+            ],
+        ],
+        'location' => [
+            [['param' => 'page_template', 'operator' => '==', 'value' => 'page-about.php']],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ]);
+
+    // ── Contact Page Fields ────────────────────
+    acf_add_local_field_group([
+        'key'    => 'group_contact_page',
+        'title'  => 'Contact Information',
+        'fields' => [
+            [
+                'key'   => 'field_contact_address',
+                'label' => 'Address',
+                'name'  => 'contact_address',
+                'type'  => 'text',
+            ],
+            [
+                'key'   => 'field_contact_email',
+                'label' => 'Email',
+                'name'  => 'contact_email',
+                'type'  => 'email',
+            ],
+            [
+                'key'   => 'field_contact_phone',
+                'label' => 'Phone',
+                'name'  => 'contact_phone',
+                'type'  => 'text',
+            ],
+            [
+                'key'   => 'field_contact_cf7_shortcode',
+                'label' => 'Contact Form 7 Shortcode',
+                'name'  => 'contact_cf7_shortcode',
+                'type'  => 'text',
+                'instructions' => 'Paste your Contact Form 7 shortcode here, e.g. [contact-form-7 id="123"]',
+            ],
+        ],
+        'location' => [
+            [['param' => 'page_template', 'operator' => '==', 'value' => 'page-contact.php']],
+        ],
+        'menu_order'            => 0,
+        'position'              => 'normal',
+        'style'                 => 'default',
+        'label_placement'       => 'top',
+        'instruction_placement' => 'label',
+    ]);
+}
+add_action('acf/init', 'ss_register_acf_fields');
+
+// ─────────────────────────────────────────────
+// Flush rewrite rules on activation
+// ─────────────────────────────────────────────
+function ss_flush_rewrite_rules(): void {
+    ss_register_post_types();
+    ss_register_taxonomies();
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'ss_flush_rewrite_rules');
+
+// Also flush once on init if flag is set
+function ss_maybe_flush(): void {
+    if (get_option('ss_flush_needed')) {
+        flush_rewrite_rules();
+        delete_option('ss_flush_needed');
+    }
+}
+add_action('init', 'ss_maybe_flush', 20);
+
+// ─────────────────────────────────────────────
+// Disable Gutenberg for CPTs (use ACF only)
+// ─────────────────────────────────────────────
+function ss_disable_gutenberg_for_cpts(bool $use_block_editor, string $post_type): bool {
+    if (in_array($post_type, ['team_member'], true)) {
+        return false;
+    }
+    return $use_block_editor;
+}
+add_filter('use_block_editor_for_post_type', 'ss_disable_gutenberg_for_cpts', 10, 2);
+
+// ─────────────────────────────────────────────
+// Helper: get image src safely from ACF field
+// ─────────────────────────────────────────────
+function ss_get_image_src(mixed $image, string $size = 'full'): string {
+    if (empty($image)) {
+        return '';
+    }
+    if (is_array($image)) {
+        return $image['sizes'][$size] ?? $image['url'] ?? '';
+    }
+    if (is_numeric($image)) {
+        return wp_get_attachment_image_url((int) $image, $size) ?: '';
+    }
+    return (string) $image;
+}
+
+// ─────────────────────────────────────────────
+// Helper: get image alt safely
+// ─────────────────────────────────────────────
+function ss_get_image_alt(mixed $image): string {
+    if (is_array($image)) {
+        return esc_attr($image['alt'] ?? $image['title'] ?? '');
+    }
+    return '';
+}

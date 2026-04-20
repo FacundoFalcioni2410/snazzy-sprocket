@@ -1,0 +1,44 @@
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.vscode/
+.idea/
+
+# Node (if you use build tools like webpack, vite, etc.)
+node_modules/
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# Build output (adjust to your setup)
+dist/
+build/
+*.map
+
+# Composer (if used in theme)
+vendor/
+
+# Environment files
+.env
+.env.*
+
+# WordPress core (if your repo is inside full WP install)
+wp-admin/
+wp-includes/
+
+# Uploads (never version these)
+wp-content/uploads/
+
+# Cache / temp
+wp-content/cache/
+wp-content/upgrade/
+
+# Mac/Linux temp
+*.tmp
+
+# Optional: ignore compiled CSS if you use SCSS
+# (uncomment if you only want to track source files)
+# *.css
+# !style.css

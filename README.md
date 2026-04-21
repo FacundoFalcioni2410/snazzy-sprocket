@@ -4,46 +4,38 @@ Custom WordPress theme for the Snazzy Sprocket agency site. Built with Tailwind 
 
 ---
 
-## Prerequisites
+## Setup
 
-- [LocalWP](https://localwp.com/) (or any local WordPress environment)
-- Node.js 18+ and npm
-- WordPress plugins installed and activated:
-  - **Advanced Custom Fields** (free version)
-  - WP-CLI (bundled with LocalWP)
+### 1. Install LocalWP
 
----
+Download and install [LocalWP](https://localwp.com/).
 
-## Local Setup
+### 2. Create a site
 
-### 1. Clone the repo
+Create a new site in LocalWP (default settings work fine).
 
-From inside your WordPress installation's `wp-content/themes/` folder, run:
+### 3. Clone the repository
+
+Inside your site's `wp-content/themes/` folder:
 
 ```bash
 git clone <repo-url>
-```
-
-This will create `wp-content/themes/snazzy-sprocket/` automatically.
-
-### 2. Install dependencies
-
-```bash
-cd wp-content/themes/snazzy-sprocket
+cd snazzy-sprocket
 npm install
-```
-
-### 3. Build Tailwind CSS
-
-```bash
 npm run build
 ```
+
+This will create `wp-content/themes/snazzy-sprocket/` and build the CSS.
 
 ### 4. Activate the theme
 
 Go to **WP Admin → Appearance → Themes** and activate **Snazzy Sprocket**.
 
-### 5. Seed demo content
+### 5. Install ACF plugin
+
+Go to **WP Admin → Plugins → Add New** and install **Advanced Custom Fields**.
+
+### 6. Run the seeder
 
 Open the LocalWP terminal (right-click your site → Open Site Shell) and run:
 

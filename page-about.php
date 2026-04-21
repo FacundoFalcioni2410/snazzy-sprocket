@@ -8,27 +8,26 @@ get_header();
 
 $hero_headline = get_field('about_hero_headline') ?: "We're the team behind your next big launch.";
 $hero_subtext  = get_field('about_hero_subtext')  ?: 'We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we\'re still proving it — one project at a time.';
-$story_headline = get_field('agency_headline')    ?: 'From side project to full-service agency';
-$story_body     = get_field('agency_story');
+$story_headline = get_field('agency_headline') ?: 'From side project to full-service agency';
 $agency_photo   = get_field('agency_photo');
-$values         = get_field('values');
-
-// Default story copy
-if (empty($story_body)) {
-    $story_body = '<p>What started as two developers freelancing out of a co-working space has grown into a team of 10 specialists spanning design, engineering, and strategy.</p>
-<p>We\'ve worked with startups finding product-market fit, mid-market companies scaling their digital presence, and enterprise organizations modernizing legacy platforms.</p>
-<p>Our approach is simple: understand the business problem first, then build the right solution — not the trendiest one. We write clean code, ship on time, and pick up the phone when things break.</p>';
-}
-
-// Default values
-if (empty($values)) {
-    $values = [
-        ['value_title' => 'Ship with Purpose',  'value_desc' => 'Every feature, every line of code should solve a real problem for real users. If it doesn\'t move the needle, it doesn\'t ship.'],
-        ['value_title' => 'Radical Candor',     'value_desc' => 'We tell clients what they need to hear, not just what they want to hear. Honest collaboration builds better products.'],
-        ['value_title' => 'Craft Over Hype',    'value_desc' => 'We\'d rather build it right than build it fast. Quality compounds over time and outlasts every trend.'],
-        ['value_title' => 'Access for All',     'value_desc' => 'The web belongs to everyone. Accessibility and performance are non-negotiable baseline requirements.'],
-    ];
-}
+$values = [
+    [
+        'value_title' => get_field('value_1_title') ?: 'Ship with Purpose',
+        'value_desc'  => get_field('value_1_desc')  ?: 'Every feature, every line of code should solve a real problem for real users. If it doesn\'t move the needle, it doesn\'t ship.',
+    ],
+    [
+        'value_title' => get_field('value_2_title') ?: 'Radical Candor',
+        'value_desc'  => get_field('value_2_desc')  ?: 'We tell clients what they need to hear, not just what they want to hear. Honest collaboration builds better products.',
+    ],
+    [
+        'value_title' => get_field('value_3_title') ?: 'Craft Over Hype',
+        'value_desc'  => get_field('value_3_desc')  ?: 'We\'d rather build it right than build it fast. Quality compounds over time and outlasts every trend.',
+    ],
+    [
+        'value_title' => get_field('value_4_title') ?: 'Access for All',
+        'value_desc'  => get_field('value_4_desc')  ?: 'The web belongs to everyone. Accessibility and performance are non-negotiable baseline requirements.',
+    ],
+];
 ?>
 
 <!-- ── Hero ─────────────────────────────────── -->
@@ -57,7 +56,7 @@ if (empty($values)) {
                     <?php echo esc_html($story_headline); ?>
                 </h2>
                 <div class="prose prose-gray max-w-none text-muted leading-relaxed">
-                    <?php echo wp_kses_post($story_body); ?>
+                    <?php the_content(); ?>
                 </div>
             </div>
 
@@ -120,7 +119,7 @@ if (empty($values)) {
         <?php
         $team = new WP_Query([
             'post_type'      => 'team_member',
-            'posts_per_page' => -1,
+            'posts_per_page' => 10,
             'orderby'        => 'menu_order',
             'order'          => 'ASC',
         ]);

@@ -25,7 +25,7 @@ $technology_terms = get_terms(['taxonomy' => 'technology', 'hide_empty' => true]
             Case Studies
         </h1>
         <p class="text-cloud/60 text-base md:text-lg leading-relaxed max-w-lg">
-            A look at how we've helped businesses across industries build better digital products and grow online.
+            <?php echo esc_html(get_theme_mod('ss_case_studies_description', "A look at how we've helped businesses across industries build better digital products and grow online.")); ?>
         </p>
     </div>
 </section>

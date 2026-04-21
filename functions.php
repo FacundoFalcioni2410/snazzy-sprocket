@@ -211,65 +211,11 @@ function ss_register_acf_fields(): void {
                 'instructions'  => 'Wide project screenshot shown below the hero. Recommended: 1200×400px.',
             ],
             [
-                'key'          => 'field_challenge',
-                'label'        => 'The Challenge',
-                'name'         => 'challenge',
-                'type'         => 'wysiwyg',
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
-            ],
-            [
-                'key'          => 'field_approach',
-                'label'        => 'Our Approach',
-                'name'         => 'approach',
-                'type'         => 'wysiwyg',
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
-            ],
-            [
-                'key'           => 'field_approach_image',
-                'label'         => 'Approach / Wireframe Image',
-                'name'          => 'approach_image',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-                'instructions'  => 'Optional process or wireframe image shown in the Approach section. Recommended: 800×400px.',
-            ],
-            [
-                'key'          => 'field_solution',
-                'label'        => 'The Solution',
-                'name'         => 'solution',
-                'type'         => 'wysiwyg',
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
-            ],
-            [
-                'key'           => 'field_solution_image',
-                'label'         => 'Solution / Final Design Image',
-                'name'          => 'solution_image',
-                'type'          => 'image',
-                'return_format' => 'array',
-                'preview_size'  => 'medium',
-                'instructions'  => 'Optional final design screenshot shown in the Solution section. Recommended: 800×400px.',
-            ],
-            [
-                'key'          => 'field_results_intro',
-                'label'        => 'Results Intro',
-                'name'         => 'results_intro',
-                'type'         => 'text',
-                'placeholder'  => 'e.g. Within 90 days of launch:',
-            ],
-            [
-                'key'          => 'field_results',
-                'label'        => 'Results',
-                'name'         => 'results',
-                'type'         => 'wysiwyg',
-                'tabs'         => 'visual',
-                'toolbar'      => 'basic',
-                'media_upload' => 0,
+                'key'          => 'field_content_note',
+                'label'        => 'Project Content',
+                'name'         => '',
+                'type'         => 'message',
+                'message'      => '<strong>Use the block editor above</strong> to write the project narrative — Challenge, Approach, Solution, and Results. Use Heading blocks (H2) for section titles and Paragraph/List blocks for body content.',
             ],
         ],
         'location' => [
@@ -458,13 +404,11 @@ function ss_register_acf_fields(): void {
                 'type'  => 'text',
             ],
             [
-                'key'           => 'field_agency_story',
-                'label'         => 'Agency Story',
-                'name'          => 'agency_story',
-                'type'          => 'wysiwyg',
-                'tabs'          => 'all',
-                'toolbar'       => 'full',
-                'media_upload'  => 1,
+                'key'     => 'field_agency_story_note',
+                'label'   => 'Agency Story',
+                'name'    => '',
+                'type'    => 'message',
+                'message' => '<strong>Write the agency story in the block editor above.</strong> Use paragraphs, headings, and any other blocks you need.',
             ],
             [
                 'key'           => 'field_agency_photo',
@@ -475,31 +419,18 @@ function ss_register_acf_fields(): void {
                 'preview_size'  => 'medium',
                 'instructions'  => 'Shown beside the agency story. Recommended: 560×380px.',
             ],
-            [
-                'key'          => 'field_values',
-                'label'        => 'Company Values',
-                'name'         => 'values',
-                'type'         => 'repeater',
-                'min'          => 0,
-                'max'          => 4,
-                'layout'       => 'block',
-                'button_label' => 'Add Value',
-                'sub_fields'   => [
-                    [
-                        'key'   => 'field_value_title',
-                        'label' => 'Title',
-                        'name'  => 'value_title',
-                        'type'  => 'text',
-                    ],
-                    [
-                        'key'   => 'field_value_desc',
-                        'label' => 'Description',
-                        'name'  => 'value_desc',
-                        'type'  => 'textarea',
-                        'rows'  => 2,
-                    ],
-                ],
-            ],
+            // Value 1
+            ['key' => 'field_value_1_title', 'label' => 'Value 1 — Title',       'name' => 'value_1_title', 'type' => 'text',     'default_value' => 'Ship with Purpose'],
+            ['key' => 'field_value_1_desc',  'label' => 'Value 1 — Description', 'name' => 'value_1_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'Every feature, every line of code should solve a real problem for real users. If it doesn\'t move the needle, it doesn\'t ship.'],
+            // Value 2
+            ['key' => 'field_value_2_title', 'label' => 'Value 2 — Title',       'name' => 'value_2_title', 'type' => 'text',     'default_value' => 'Radical Candor'],
+            ['key' => 'field_value_2_desc',  'label' => 'Value 2 — Description', 'name' => 'value_2_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'We tell clients what they need to hear, not just what they want to hear. Honest collaboration builds better products.'],
+            // Value 3
+            ['key' => 'field_value_3_title', 'label' => 'Value 3 — Title',       'name' => 'value_3_title', 'type' => 'text',     'default_value' => 'Craft Over Hype'],
+            ['key' => 'field_value_3_desc',  'label' => 'Value 3 — Description', 'name' => 'value_3_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'We\'d rather build it right than build it fast. Quality compounds over time and outlasts every trend.'],
+            // Value 4
+            ['key' => 'field_value_4_title', 'label' => 'Value 4 — Title',       'name' => 'value_4_title', 'type' => 'text',     'default_value' => 'Access for All'],
+            ['key' => 'field_value_4_desc',  'label' => 'Value 4 — Description', 'name' => 'value_4_desc',  'type' => 'textarea', 'rows' => 2, 'default_value' => 'The web belongs to everyone. Accessibility and performance are non-negotiable baseline requirements.'],
         ],
         'location' => [
             [['param' => 'page_template', 'operator' => '==', 'value' => 'page-about.php']],
@@ -638,16 +569,28 @@ function ss_maybe_flush(): void {
 }
 add_action('init', 'ss_maybe_flush', 20);
 
+
 // ─────────────────────────────────────────────
-// Disable Gutenberg for CPTs (use ACF only)
+// Customizer — editable text for CPT archives
 // ─────────────────────────────────────────────
-function ss_disable_gutenberg_for_cpts(bool $use_block_editor, string $post_type): bool {
-    if (in_array($post_type, ['team_member'], true)) {
-        return false;
-    }
-    return $use_block_editor;
+function ss_customizer_settings( WP_Customize_Manager $wp_customize ): void {
+    $wp_customize->add_section('ss_case_studies', [
+        'title'    => 'Case Studies Archive',
+        'priority' => 30,
+    ]);
+
+    $wp_customize->add_setting('ss_case_studies_description', [
+        'default'           => 'A look at how we\'ve helped businesses across industries build better digital products and grow online.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+        'transport'         => 'postMessage',
+    ]);
+    $wp_customize->add_control('ss_case_studies_description', [
+        'label'   => 'Archive Page Description',
+        'section' => 'ss_case_studies',
+        'type'    => 'textarea',
+    ]);
 }
-add_filter('use_block_editor_for_post_type', 'ss_disable_gutenberg_for_cpts', 10, 2);
+add_action('customize_register', 'ss_customizer_settings');
 
 // ─────────────────────────────────────────────
 // Helper: get image src safely from ACF field

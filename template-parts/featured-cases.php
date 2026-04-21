@@ -6,7 +6,7 @@ $featured = new WP_Query([
     'post_type'      => 'case_study',
     'posts_per_page' => 3,
     'meta_query'     => [
-        ['key' => 'is_featured', 'value' => '1', 'compare' => '='],
+        ['key' => 'is_featured', 'value' => ['1', 'true', true], 'compare' => 'IN'],
     ],
     'orderby'        => 'date',
     'order'          => 'DESC',

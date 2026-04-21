@@ -6,18 +6,11 @@ get_header();
 
 the_post();
 
-$client_name      = get_field('client_name');
-$timeline         = get_field('timeline');
-$services_prov    = get_field('services_provided');
-$tagline          = get_field('tagline');
-$hero_screenshot  = get_field('hero_screenshot');
-$challenge        = get_field('challenge');
-$approach         = get_field('approach');
-$approach_image   = get_field('approach_image');
-$solution         = get_field('solution');
-$solution_image   = get_field('solution_image');
-$results_intro    = get_field('results_intro') ?: 'Within 90 days of launch:';
-$results          = get_field('results');
+$client_name     = get_field('client_name');
+$timeline        = get_field('timeline');
+$services_prov   = get_field('services_provided');
+$tagline         = get_field('tagline');
+$hero_screenshot = get_field('hero_screenshot');
 
 $industries   = get_the_terms(get_the_ID(), 'industry');
 $technologies = get_the_terms(get_the_ID(), 'technology');
@@ -105,100 +98,12 @@ $all_terms = array_merge(
 </section>
 <?php endif; ?>
 
-<!-- ── Content Sections ──────────────────────── -->
+<!-- ── Content (Gutenberg blocks) ────────────── -->
 <div class="bg-white">
     <div class="container-site py-16 md:py-20">
-        <div class="max-w-2xl">
-
-            <!-- The Challenge -->
-            <?php if ($challenge) : ?>
-            <div class="mb-14">
-                <h2 class="font-display font-extrabold text-ink text-3xl md:text-4xl mb-6">The Challenge</h2>
-                <div class="prose prose-gray max-w-none">
-                    <?php echo wp_kses_post($challenge); ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <!-- Our Approach -->
-            <?php if ($approach) : ?>
-            <div class="mb-8">
-                <h2 class="font-display font-extrabold text-ink text-3xl md:text-4xl mb-6">Our Approach</h2>
-                <div class="prose prose-gray max-w-none">
-                    <?php echo wp_kses_post($approach); ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
+        <div class="max-w-2xl prose prose-gray prose-headings:font-display prose-headings:font-extrabold prose-headings:text-ink prose-h2:text-3xl prose-h2:md:text-4xl prose-li:text-muted prose-p:text-muted">
+            <?php the_content(); ?>
         </div>
-
-        <!-- Approach image (wider than text) -->
-        <?php if (!empty($approach_image)) : ?>
-        <div class="max-w-3xl mb-14">
-            <div class="rounded-2xl overflow-hidden bg-fog/30 aspect-[2/1] border border-cloud/40">
-                <img
-                    src="<?php echo esc_url(ss_get_image_src($approach_image, 'large')); ?>"
-                    alt="<?php echo ss_get_image_alt($approach_image) ?: 'Wireframe / Process Image'; ?>"
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                >
-            </div>
-        </div>
-        <?php elseif ($approach) : ?>
-        <div class="max-w-3xl mb-14">
-            <div class="rounded-2xl bg-fog/30 aspect-[2/1] border border-cloud/40 flex items-center justify-center">
-                <p class="text-muted/40 text-sm font-display">Wireframe / Process Image — 800 × 400</p>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <div class="max-w-2xl">
-
-            <!-- The Solution -->
-            <?php if ($solution) : ?>
-            <div class="mb-8">
-                <h2 class="font-display font-extrabold text-ink text-3xl md:text-4xl mb-6">The Solution</h2>
-                <div class="prose prose-gray max-w-none">
-                    <?php echo wp_kses_post($solution); ?>
-                </div>
-            </div>
-            <?php endif; ?>
-
-        </div>
-
-        <!-- Solution image -->
-        <?php if (!empty($solution_image)) : ?>
-        <div class="max-w-3xl mb-14">
-            <div class="rounded-2xl overflow-hidden bg-fog/30 aspect-[2/1] border border-cloud/40">
-                <img
-                    src="<?php echo esc_url(ss_get_image_src($solution_image, 'large')); ?>"
-                    alt="<?php echo ss_get_image_alt($solution_image) ?: 'Final Design Screenshot'; ?>"
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                >
-            </div>
-        </div>
-        <?php elseif ($solution) : ?>
-        <div class="max-w-3xl mb-14">
-            <div class="rounded-2xl bg-fog/30 aspect-[2/1] border border-cloud/40 flex items-center justify-center">
-                <p class="text-muted/40 text-sm font-display">Final Design Screenshot — 800 × 400</p>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Results -->
-        <?php if ($results) : ?>
-        <div class="max-w-2xl mb-4">
-            <h2 class="font-display font-extrabold text-ink text-3xl md:text-4xl mb-3">Results</h2>
-            <?php if ($results_intro) : ?>
-            <p class="text-muted text-base mb-4"><?php echo esc_html($results_intro); ?></p>
-            <?php endif; ?>
-            <div class="prose prose-gray max-w-none">
-                <?php echo wp_kses_post($results); ?>
-            </div>
-        </div>
-        <?php endif; ?>
-
     </div>
 </div>
 

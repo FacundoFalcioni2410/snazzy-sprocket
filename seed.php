@@ -370,10 +370,9 @@ if (!$home_page) {
 }
 
 if ($home_page) {
-    update_field('hero_headline',    'We engineer websites that <span class="text-accent">drive results</span>', $home_page->ID);
-    update_field('hero_subheadline', 'Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.', $home_page->ID);
-    update_field('hero_cta_label',   'View Our Work', $home_page->ID);
-    update_field('hero_cta_url',     home_url('/case-studies'), $home_page->ID);
+    // Hero text lives in the page content (Gutenberg blocks)
+    $hero_content = '<!-- wp:heading {"level":1} --><h1 class="wp-block-heading">We engineer websites that <span style="color:#00D4A4">drive results</span></h1><!-- /wp:heading --><!-- wp:paragraph --><p>Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.</p><!-- /wp:paragraph --><!-- wp:buttons --><div class="wp-block-buttons"><!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/case-studies">View Our Work →</a></div><!-- /wp:button --><!-- wp:button {"className":"is-style-outline"} --><div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact">Start a Project</a></div><!-- /wp:button --></div><!-- /wp:buttons -->';
+    wp_update_post(['ID' => $home_page->ID, 'post_content' => $hero_content]);
 
     update_field('stat_1_number', '120+',  $home_page->ID);
     update_field('stat_1_label',  'Projects Delivered', $home_page->ID);
@@ -411,9 +410,9 @@ if ($home_page) {
 // ─────────────────────────────────────────────
 $about_page = get_page_by_path('about');
 if ($about_page) {
+    wp_update_post(['ID' => $about_page->ID, 'post_title' => 'About']);
     update_field('about_hero_headline', "We're the team behind your next big launch.", $about_page->ID);
     update_field('about_hero_subtext',  "We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we're still proving it — one project at a time.", $about_page->ID);
-    update_field('agency_headline',     'From side project to full-service agency', $about_page->ID);
 
     // Individual value fields (replaces repeater — works with free ACF)
     update_field('value_1_title', 'Ship with Purpose', $about_page->ID);
@@ -440,8 +439,9 @@ if ($about_page) {
 // ─────────────────────────────────────────────
 $contact_page = get_page_by_path('contact');
 if ($contact_page) {
+    wp_update_post(['ID' => $contact_page->ID, 'post_title' => 'Contact']);
     update_field('contact_hero_headline',    "Let's build something together", $contact_page->ID);
-    update_field('contact_hero_subheadline', 'Fill out the form below and we\'ll get back to you within one business day.', $contact_page->ID);
+    update_field('contact_hero_subheadline', "Fill out the form below and we'll get back to you within one business day.", $contact_page->ID);
     update_field('contact_email',  'hello@snazzysprocket.com', $contact_page->ID);
     update_field('contact_phone',  '(215) 555-0147', $contact_page->ID);
     update_field('contact_office', '1247 Market Street, Suite 400, Philadelphia, PA 19107', $contact_page->ID);

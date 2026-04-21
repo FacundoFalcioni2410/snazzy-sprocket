@@ -36,43 +36,47 @@ $technology_terms = get_terms(['taxonomy' => 'technology', 'hide_empty' => true]
 
         <!-- Industry filters -->
         <?php if (!empty($industry_terms) && !is_wp_error($industry_terms)) : ?>
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-label font-bold uppercase tracking-widest text-steel mr-2 flex-shrink-0">Industry</span>
-            <button
-                class="filter-btn active"
-                data-filter="all"
-                data-filter-type="industry"
-                aria-pressed="true"
-            >All</button>
-            <?php foreach ($industry_terms as $term) : ?>
-            <button
-                class="filter-btn"
-                data-filter="<?php echo esc_attr($term->slug); ?>"
-                data-filter-type="industry"
-                aria-pressed="false"
-            ><?php echo esc_html($term->name); ?></button>
-            <?php endforeach; ?>
+        <div class="flex flex-col gap-2">
+            <span class="text-label font-bold uppercase tracking-widest text-steel">Industry</span>
+            <div class="flex flex-wrap gap-2">
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                    data-filter-type="industry"
+                    aria-pressed="true"
+                >All</button>
+                <?php foreach ($industry_terms as $term) : ?>
+                <button
+                    class="filter-btn"
+                    data-filter="<?php echo esc_attr($term->slug); ?>"
+                    data-filter-type="industry"
+                    aria-pressed="false"
+                ><?php echo esc_html($term->name); ?></button>
+                <?php endforeach; ?>
+            </div>
         </div>
         <?php endif; ?>
 
         <!-- Technology filters -->
         <?php if (!empty($technology_terms) && !is_wp_error($technology_terms)) : ?>
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-label font-bold uppercase tracking-widest text-steel mr-2 flex-shrink-0">Technology</span>
-            <button
-                class="filter-btn active"
-                data-filter="all"
-                data-filter-type="technology"
-                aria-pressed="true"
-            >All</button>
-            <?php foreach ($technology_terms as $term) : ?>
-            <button
-                class="filter-btn"
-                data-filter="<?php echo esc_attr($term->slug); ?>"
-                data-filter-type="technology"
-                aria-pressed="false"
-            ><?php echo esc_html($term->name); ?></button>
-            <?php endforeach; ?>
+        <div class="flex flex-col gap-2">
+            <span class="text-label font-bold uppercase tracking-widest text-steel">Technology</span>
+            <div class="flex flex-wrap gap-2">
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                    data-filter-type="technology"
+                    aria-pressed="true"
+                >All</button>
+                <?php foreach ($technology_terms as $term) : ?>
+                <button
+                    class="filter-btn"
+                    data-filter="<?php echo esc_attr($term->slug); ?>"
+                    data-filter-type="technology"
+                    aria-pressed="false"
+                ><?php echo esc_html($term->name); ?></button>
+                <?php endforeach; ?>
+            </div>
         </div>
         <?php endif; ?>
 

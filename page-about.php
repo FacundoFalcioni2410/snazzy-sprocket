@@ -6,9 +6,10 @@
  */
 get_header();
 
-$hero_headline = get_field('about_hero_headline') ?: "We're the team behind your next big launch.";
-$hero_subtext  = get_field('about_hero_subtext')  ?: 'We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we\'re still proving it — one project at a time.';
-$story_headline = get_field('agency_headline') ?: 'From side project to full-service agency';
+if (have_posts()) { the_post(); }
+
+$hero_headline  = get_field('about_hero_headline') ?: "We're the team behind your next big launch.";
+$hero_subtext   = get_field('about_hero_subtext')  ?: "We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we're still proving it — one project at a time.";
 $agency_photo   = get_field('agency_photo');
 $values = [
     [
@@ -52,9 +53,6 @@ $values = [
             <!-- Text -->
             <div>
                 <p class="section-label">Our Story</p>
-                <h2 id="story-heading" class="section-title mb-6">
-                    <?php echo esc_html($story_headline); ?>
-                </h2>
                 <div class="prose prose-gray max-w-none text-muted leading-relaxed">
                     <?php the_content(); ?>
                 </div>

@@ -7,6 +7,8 @@
  */
 get_header();
 
+if (have_posts()) { the_post(); }
+
 $email     = get_field('contact_email')     ?: 'hello@snazzysprocket.com';
 $phone     = get_field('contact_phone')     ?: '(215) 555-0147';
 $office    = get_field('contact_office')    ?: '1247 Market Street, Suite 400, Philadelphia, PA 19107';
@@ -16,9 +18,9 @@ $twitter   = get_field('contact_twitter')   ?: '#';
 $linkedin  = get_field('contact_linkedin')  ?: '#';
 $dribbble  = get_field('contact_dribbble')  ?: '#';
 
-$sent  = isset($_GET['sent']);
+$sent             = isset($_GET['sent']);
 $hero_headline    = get_field('contact_hero_headline')    ?: "Let's build something together";
-$hero_subheadline = get_field('contact_hero_subheadline') ?: 'Fill out the form below and we\'ll get back to you within one business day.';
+$hero_subheadline = get_field('contact_hero_subheadline') ?: "Fill out the form below and we'll get back to you within one business day.";
 ?>
 
 <!-- ── Hero ─────────────────────────────────── -->

@@ -13,6 +13,8 @@ function ss_theme_setup(): void {
     add_theme_support('editor-styles');
     add_theme_support('wp-block-styles');
     add_theme_support('align-wide');
+    add_editor_style('editor-style.css');
+    add_post_type_support('page', 'excerpt');
 
     register_nav_menus([
         'primary' => __('Primary Navigation', 'snazzy-sprocket'),
@@ -44,9 +46,9 @@ function ss_enqueue_assets(): void {
     // Theme JS
     wp_enqueue_script(
         'ss-scripts',
-        get_template_directory_uri() . '/dist/js/app.js',
+        get_template_directory_uri() . '/src/js/app.js',
         [],
-        filemtime(get_template_directory() . '/dist/js/app.js'),
+        filemtime(get_template_directory() . '/src/js/app.js'),
         true
     );
 }
@@ -277,30 +279,6 @@ function ss_register_acf_fields(): void {
         'title'  => 'Homepage Content',
         'fields' => [
             [
-                'key'   => 'field_hero_headline',
-                'label' => 'Hero Headline',
-                'name'  => 'hero_headline',
-                'type'  => 'text',
-            ],
-            [
-                'key'   => 'field_hero_subheadline',
-                'label' => 'Hero Subheadline',
-                'name'  => 'hero_subheadline',
-                'type'  => 'text',
-            ],
-            [
-                'key'   => 'field_hero_cta_label',
-                'label' => 'Hero CTA Button Label',
-                'name'  => 'hero_cta_label',
-                'type'  => 'text',
-            ],
-            [
-                'key'   => 'field_hero_cta_url',
-                'label' => 'Hero CTA Button URL',
-                'name'  => 'hero_cta_url',
-                'type'  => 'url',
-            ],
-            [
                 'key'   => 'field_stat_1_number',
                 'label' => 'Stat 1 Number',
                 'name'  => 'stat_1_number',
@@ -473,19 +451,6 @@ function ss_register_acf_fields(): void {
                 'rows'         => 2,
             ],
             [
-                'key'   => 'field_agency_headline',
-                'label' => 'Story Headline',
-                'name'  => 'agency_headline',
-                'type'  => 'text',
-            ],
-            [
-                'key'     => 'field_agency_story_note',
-                'label'   => 'Agency Story',
-                'name'    => '',
-                'type'    => 'message',
-                'message' => '<strong>Write the agency story in the block editor above.</strong> Use paragraphs, headings, and any other blocks you need.',
-            ],
-            [
                 'key'           => 'field_agency_photo',
                 'label'         => 'Team Photo',
                 'name'          => 'agency_photo',
@@ -523,19 +488,19 @@ function ss_register_acf_fields(): void {
         'title'  => 'Contact Information',
         'fields' => [
             [
-                'key'          => 'field_contact_hero_headline',
-                'label'        => 'Hero Headline',
-                'name'         => 'contact_hero_headline',
-                'type'         => 'text',
+                'key'           => 'field_contact_hero_headline',
+                'label'         => 'Hero Headline',
+                'name'          => 'contact_hero_headline',
+                'type'          => 'text',
                 'default_value' => "Let's build something together",
             ],
             [
-                'key'          => 'field_contact_hero_subheadline',
-                'label'        => 'Hero Subheadline',
-                'name'         => 'contact_hero_subheadline',
-                'type'         => 'textarea',
-                'rows'        => 2,
-                'default_value' => 'Fill out the form below and we\'ll get back to you within one business day.',
+                'key'           => 'field_contact_hero_subheadline',
+                'label'         => 'Hero Subtext',
+                'name'          => 'contact_hero_subheadline',
+                'type'          => 'textarea',
+                'rows'          => 2,
+                'default_value' => "Fill out the form below and we'll get back to you within one business day.",
             ],
             [
                 'key'          => 'field_contact_email',
@@ -603,6 +568,32 @@ function ss_register_acf_fields(): void {
     ]);
 }
 add_action('acf/init', 'ss_register_acf_fields');
+
+// ─────────────────────────────────────────────
+// Block Patterns
+// ─────────────────────────────────────────────
+function ss_register_block_patterns(): void {
+    register_block_pattern_category('snazzy-sprocket', [
+        'label' => __('Snazzy Sprocket', 'snazzy-sprocket'),
+    ]);
+
+    // Homepage hero text — headline + subheadline + CTA buttons
+    register_block_pattern('snazzy-sprocket/hero-content', [
+        'title'       => __('Hero Content', 'snazzy-sprocket'),
+        'description' => __('Headline, subheadline, and CTA buttons for the homepage hero section.', 'snazzy-sprocket'),
+        'categories'  => ['snazzy-sprocket'],
+        'content'     => '<!-- wp:heading {"level":1} --><h1 class="wp-block-heading">We engineer websites that <span style="color:#00D4A4">drive results</span></h1><!-- /wp:heading --><!-- wp:paragraph --><p>Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.</p><!-- /wp:paragraph --><!-- wp:buttons --><div class="wp-block-buttons"><!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/case-studies">View Our Work →</a></div><!-- /wp:button --><!-- wp:button {"className":"is-style-outline"} --><div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact">Start a Project</a></div><!-- /wp:button --></div><!-- /wp:buttons -->',
+    ]);
+
+    // Dark CTA banner — reusable across pages
+    register_block_pattern('snazzy-sprocket/cta-banner', [
+        'title'       => __('CTA Banner', 'snazzy-sprocket'),
+        'description' => __('Dark full-width call-to-action section with headline and button.', 'snazzy-sprocket'),
+        'categories'  => ['snazzy-sprocket', 'call-to-action'],
+        'content'     => '<!-- wp:group {"backgroundColor":"ink","align":"full","style":{"spacing":{"padding":{"top":"5rem","bottom":"5rem"}}}} --><div class="wp-block-group alignfull has-ink-background-color has-background" style="padding-top:5rem;padding-bottom:5rem"><!-- wp:heading {"textAlign":"center","level":2,"textColor":"white"} --><h2 class="wp-block-heading has-text-align-center has-white-color has-text-color">Ready to build something great?</h2><!-- /wp:heading --><!-- wp:paragraph {"align":"center","textColor":"cloud"} --><p class="has-text-align-center has-cloud-color has-text-color">Tell us about your project and we\'ll get back to you within one business day.</p><!-- /wp:paragraph --><!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} --><div class="wp-block-buttons"><!-- wp:button {"backgroundColor":"accent","textColor":"ink","style":{"border":{"radius":"10px"}}} --><div class="wp-block-button"><a class="wp-block-button__link has-ink-color has-accent-background-color has-text-color has-background wp-element-button" href="/contact" style="border-radius:10px">Start a Project</a></div><!-- /wp:button --></div><!-- /wp:buttons --></div><!-- /wp:group -->',
+    ]);
+}
+add_action('init', 'ss_register_block_patterns');
 
 // ─────────────────────────────────────────────
 // Contact form handler

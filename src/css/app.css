@@ -107,4 +107,29 @@
   .nav-link {
     @apply text-sm font-display font-semibold text-cloud hover:text-accent transition-colors duration-150;
   }
+
+  /* ── Hero Gutenberg content ───────────── */
+  .hero-content .wp-block-heading {
+    @apply font-display font-extrabold text-white leading-[1.02] mb-6 text-4xl sm:text-5xl lg:text-hero;
+  }
+
+  .hero-content p {
+    @apply text-cloud/70 text-base md:text-lg leading-relaxed max-w-lg mb-10;
+  }
+
+  .hero-content .wp-block-buttons {
+    @apply flex flex-wrap gap-4;
+  }
+
+  .hero-content .wp-block-button__link {
+    @apply inline-flex items-center justify-center px-7 py-3.5 font-display font-bold text-sm
+           bg-accent text-ink hover:bg-accent-bright transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent
+           rounded no-underline;
+  }
+
+  .hero-content .wp-block-button.is-style-outline .wp-block-button__link {
+    @apply bg-transparent text-white border-2 border-white hover:bg-white hover:text-ink
+           focus:ring-white;
+  }
 }

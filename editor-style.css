@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap');
+
+.editor-styles-wrapper {
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #687384;
+}
+
+.editor-styles-wrapper h1,
+.editor-styles-wrapper h2,
+.editor-styles-wrapper h3,
+.editor-styles-wrapper h4,
+.editor-styles-wrapper h5,
+.editor-styles-wrapper h6 {
+    font-family: Syne, ui-sans-serif, system-ui, sans-serif;
+    color: #090F1A;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5em;
+}
+
+.editor-styles-wrapper p {
+    color: #687384;
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+.editor-styles-wrapper a {
+    color: #00D4A4;
+    text-decoration: underline;
+}
+
+.editor-styles-wrapper strong {
+    color: #090F1A;
+    font-weight: 600;
+}
+
+.editor-styles-wrapper ul,
+.editor-styles-wrapper ol {
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+    color: #687384;
+}
+
+.editor-styles-wrapper li {
+    margin-bottom: 0.4em;
+    line-height: 1.6;
+}
+
+.editor-styles-wrapper blockquote {
+    border-left: 3px solid #00D4A4;
+    padding-left: 1.25em;
+    color: #2A3C38;
+    font-style: italic;
+    margin: 1.5em 0;
+}

@@ -3,6 +3,9 @@
  * Homepage template
  */
 get_header();
+
+// Set up the global post so the_content() works in template-parts/hero
+if (have_posts()) { the_post(); }
 ?>
 
 <?php get_template_part('template-parts/hero'); ?>

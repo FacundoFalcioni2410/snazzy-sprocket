@@ -23,8 +23,6 @@ if (file_exists($acf_path)) {
 
 /**
  * Download an image from $url, attach it to $post_id, and set as featured image.
- * Note: External images (picsum) skipped by default to avoid timeouts.
- * Run with --with-images flag to include them.
  */
 function seed_set_featured_image($post_id, $url, $desc) {
     if (has_post_thumbnail($post_id)) {
@@ -32,17 +30,32 @@ function seed_set_featured_image($post_id, $url, $desc) {
         return;
     }
 
-    // Skip external URLs by default
-    WP_CLI::line("  Image skipped (external disabled): {$desc}");
+    try {
+        $attachment_id = media_sideload_image($url, $post_id, $desc, 'id');
+        if (is_wp_error($attachment_id)) {
+            throw new Exception($attachment_id->get_error_message());
+        }
+        set_post_thumbnail($post_id, $attachment_id);
+        WP_CLI::line("  Image set for: {$desc}");
+    } catch (Exception $e) {
+        WP_CLI::warning("  Image failed ({$desc}): " . $e->getMessage());
+    }
 }
 
 /**
- * Download an image and set it as an ACF image field value.
- * Note: External images (picsum) skipped by default to avoid timeouts.
+ * Download an image and set it as a post meta field value.
  */
 function seed_set_acf_image($post_id, $acf_key, $url, $desc) {
-    // Skip all images by default
-    WP_CLI::line("  ACF image skipped (external disabled): {$desc}");
+    try {
+        $attachment_id = media_sideload_image($url, $post_id, $desc, 'id');
+        if (is_wp_error($attachment_id)) {
+            throw new Exception($attachment_id->get_error_message());
+        }
+        update_post_meta($post_id, $acf_key, $attachment_id);
+        WP_CLI::line("  ACF image set ({$acf_key}): {$desc}");
+    } catch (Exception $e) {
+        WP_CLI::warning("  ACF image failed ({$desc}): " . $e->getMessage());
+    }
 }
 
 // ─────────────────────────────────────────────

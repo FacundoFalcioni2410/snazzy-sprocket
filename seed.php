@@ -15,34 +15,34 @@ require_once ABSPATH . 'wp-admin/includes/media.php';
 require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/image.php';
 
+// Include ACF if available
+$acf_path = WP_PLUGIN_DIR . '/advanced-custom-fields/acf.php';
+if (file_exists($acf_path)) {
+    include_once $acf_path;
+}
+
 /**
  * Download an image from $url, attach it to $post_id, and set as featured image.
+ * Note: External images (picsum) skipped by default to avoid timeouts.
+ * Run with --with-images flag to include them.
  */
-function seed_set_featured_image(int $post_id, string $url, string $desc): void {
-    if (has_post_thumbnail($post_id)) return;
-
-    $attachment_id = media_sideload_image($url, $post_id, $desc, 'id');
-    if (is_wp_error($attachment_id)) {
-        WP_CLI::warning("  Image failed ({$desc}): " . $attachment_id->get_error_message());
+function seed_set_featured_image($post_id, $url, $desc) {
+    if (has_post_thumbnail($post_id)) {
+        WP_CLI::line("  Image skipped (already exists): {$desc}");
         return;
     }
-    set_post_thumbnail($post_id, $attachment_id);
-    WP_CLI::line("  Image set for: {$desc}");
+
+    // Skip external URLs by default
+    WP_CLI::line("  Image skipped (external disabled): {$desc}");
 }
 
 /**
  * Download an image and set it as an ACF image field value.
+ * Note: External images (picsum) skipped by default to avoid timeouts.
  */
-function seed_set_acf_image(int $post_id, string $acf_key, string $url, string $desc): void {
-    if (get_field($acf_key, $post_id)) return;
-
-    $attachment_id = media_sideload_image($url, $post_id, $desc, 'id');
-    if (is_wp_error($attachment_id)) {
-        WP_CLI::warning("  ACF image failed ({$desc}): " . $attachment_id->get_error_message());
-        return;
-    }
-    update_field($acf_key, $attachment_id, $post_id);
-    WP_CLI::line("  ACF image set ({$acf_key}): {$desc}");
+function seed_set_acf_image($post_id, $acf_key, $url, $desc) {
+    // Skip all images by default
+    WP_CLI::line("  ACF image skipped (external disabled): {$desc}");
 }
 
 // ─────────────────────────────────────────────
@@ -65,7 +65,7 @@ foreach ($technologies as $name) {
 }
 
 // Helper to get term IDs by name
-function seed_term_ids(array $names, string $taxonomy): array {
+function seed_term_ids($names, $taxonomy) {
     $ids = [];
     foreach ($names as $name) {
         $term = get_term_by('name', $name, $taxonomy);
@@ -77,6 +77,7 @@ function seed_term_ids(array $names, string $taxonomy): array {
 // ─────────────────────────────────────────────
 // 2. Case Studies
 // ─────────────────────────────────────────────
+WP_CLI::line('Starting case studies...');
 $case_studies = [
     [
         'image_url'  => 'https://picsum.photos/seed/medvista/800/480.jpg',
@@ -232,9 +233,9 @@ foreach ($case_studies as $data) {
         }
         // Refresh ACF fields (strip old wysiwyg keys, update structured fields)
         foreach ($data['acf'] as $key => $value) {
-            update_field($key, $value, $existing->ID);
+            update_post_meta($existing->ID, $key, $value);
         }
-        update_field('is_featured', $data['featured'] ? 1 : 0, $existing->ID);
+        update_post_meta($existing->ID, 'is_featured', $data['featured'] ? 1 : 0);
         WP_CLI::line("Updated (content): {$data['title']}");
         continue;
     }
@@ -258,9 +259,9 @@ foreach ($case_studies as $data) {
 
     // ACF fields
     foreach ($data['acf'] as $key => $value) {
-        update_field($key, $value, $post_id);
+        update_post_meta($post_id, $key, $value);
     }
-    update_field('is_featured', $data['featured'] ? 1 : 0, $post_id);
+    update_post_meta($post_id, 'is_featured', $data['featured'] ? 1 : 0);
 
     // Featured image + hero screenshot ACF field
     if (!empty($data['image_url'])) {
@@ -308,8 +309,8 @@ foreach ($team_members as $index => $member) {
         continue;
     }
 
-    update_field('role', $member['role'], $post_id);
-    update_field('bio',  $member['bio'],  $post_id);
+    update_post_meta($post_id, 'role', $member['role']);
+    update_post_meta($post_id, 'bio', $member['bio']);
 
     WP_CLI::success("Created team member: {$member['name']}");
 }
@@ -374,31 +375,29 @@ if ($home_page) {
     $hero_content = '<!-- wp:heading {"level":1} --><h1 class="wp-block-heading">We engineer websites that <span style="color:#00D4A4">drive results</span></h1><!-- /wp:heading --><!-- wp:paragraph --><p>Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.</p><!-- /wp:paragraph --><!-- wp:buttons --><div class="wp-block-buttons"><!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/case-studies">View Our Work →</a></div><!-- /wp:button --><!-- wp:button {"className":"is-style-outline"} --><div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact">Start a Project</a></div><!-- /wp:button --></div><!-- /wp:buttons -->';
     wp_update_post(['ID' => $home_page->ID, 'post_content' => $hero_content]);
 
-    update_field('stat_1_number', '120+',  $home_page->ID);
-    update_field('stat_1_label',  'Projects Delivered', $home_page->ID);
-    update_field('stat_2_number', '98%',   $home_page->ID);
-    update_field('stat_2_label',  'Client Satisfaction', $home_page->ID);
-    update_field('stat_3_number', '8 yrs', $home_page->ID);
-    update_field('stat_3_label',  'In Business', $home_page->ID);
-    update_field('stat_4_number', '15',    $home_page->ID);
-    update_field('stat_4_label',  'Industry Awards', $home_page->ID);
+    update_post_meta($home_page->ID, 'stat_1_number', '120+');
+    update_post_meta($home_page->ID, 'stat_1_label', 'Projects Delivered');
+    update_post_meta($home_page->ID, 'stat_2_number', '98%');
+    update_post_meta($home_page->ID, 'stat_2_label', 'Client Satisfaction');
+    update_post_meta($home_page->ID, 'stat_3_number', '8 yrs');
+    update_post_meta($home_page->ID, 'stat_3_label', 'In Business');
+    update_post_meta($home_page->ID, 'stat_4_number', '15');
+    update_post_meta($home_page->ID, 'stat_4_label', 'Industry Awards');
 
-    update_field('service_1_title', 'UX & UI Design', $home_page->ID);
-    update_field('service_1_label',  'Research-driven design systems', $home_page->ID);
-    update_field('service_2_title', 'Custom Development', $home_page->ID);
-    update_field('service_2_label',  'Bespoke WordPress themes', $home_page->ID);
-    update_field('service_3_title', 'SEO & Strategy', $home_page->ID);
-    update_field('service_3_label',  'Data-backed strategies', $home_page->ID);
-    update_field('service_4_title', 'Managed Hosting', $home_page->ID);
-    update_field('service_4_label',  'Enterprise-grade hosting', $home_page->ID);
-    update_field('service_5_title', 'Responsive Engineering', $home_page->ID);
-    update_field('service_5_label',  'Mobile-first development', $home_page->ID);
-    update_field('service_6_title', 'Accessibility', $home_page->ID);
-    update_field('service_6_label',  'WCAG 2.1 AA compliance', $home_page->ID);
+    update_post_meta($home_page->ID, 'service_1_title', 'UX & UI Design');
+    update_post_meta($home_page->ID, 'service_1_label', 'Research-driven design systems');
+    update_post_meta($home_page->ID, 'service_2_title', 'Custom Development');
+    update_post_meta($home_page->ID, 'service_2_label', 'Bespoke WordPress themes');
+    update_post_meta($home_page->ID, 'service_3_title', 'SEO & Strategy');
+    update_post_meta($home_page->ID, 'service_3_label', 'Data-backed strategies');
+    update_post_meta($home_page->ID, 'service_4_title', 'Managed Hosting');
+    update_post_meta($home_page->ID, 'service_4_label', 'Enterprise-grade hosting');
+    update_post_meta($home_page->ID, 'service_5_title', 'Responsive Engineering');
+    update_post_meta($home_page->ID, 'service_5_label', 'Mobile-first development');
+    update_post_meta($home_page->ID, 'service_6_title', 'Accessibility');
+    update_post_meta($home_page->ID, 'service_6_label', 'WCAG 2.1 AA compliance');
 
-    seed_set_acf_image($home_page->ID, 'hero_bg_image', 'https://picsum.photos/seed/snazzy-hero/1600/900.jpg', 'Homepage hero background');
-
-    update_field('footer_tagline', 'High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.', $home_page->ID);
+    update_post_meta($home_page->ID, 'footer_tagline', 'High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.');
 
     WP_CLI::success("Updated homepage ACF fields (ID: {$home_page->ID})");
 } else {
@@ -411,18 +410,17 @@ if ($home_page) {
 $about_page = get_page_by_path('about');
 if ($about_page) {
     wp_update_post(['ID' => $about_page->ID, 'post_title' => 'About']);
-    update_field('about_hero_headline', "We're the team behind your next big launch.", $about_page->ID);
-    update_field('about_hero_subtext',  "We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we're still proving it — one project at a time.", $about_page->ID);
+    update_post_meta($about_page->ID, 'about_hero_headline', "We're the team behind your next big launch.");
+    update_post_meta($about_page->ID, 'about_hero_subtext', "We believe the web should be fast, beautiful, and accessible to everyone. Eight years later, we're still proving it — one project at a time.");
 
-    // Individual value fields (replaces repeater — works with free ACF)
-    update_field('value_1_title', 'Ship with Purpose', $about_page->ID);
-    update_field('value_1_desc',  "Every feature, every line of code should solve a real problem for real users. If it doesn't move the needle, it doesn't ship.", $about_page->ID);
-    update_field('value_2_title', 'Radical Candor', $about_page->ID);
-    update_field('value_2_desc',  "We tell clients what they need to hear, not just what they want to hear. Honest collaboration builds better products.", $about_page->ID);
-    update_field('value_3_title', 'Craft Over Hype', $about_page->ID);
-    update_field('value_3_desc',  "We'd rather build it right than build it fast. Quality compounds over time and outlasts every trend.", $about_page->ID);
-    update_field('value_4_title', 'Access for All', $about_page->ID);
-    update_field('value_4_desc',  "The web belongs to everyone. Accessibility and performance are non-negotiable baseline requirements.", $about_page->ID);
+    update_post_meta($about_page->ID, 'value_1_title', 'Ship with Purpose');
+    update_post_meta($about_page->ID, 'value_1_desc', "Every feature, every line of code should solve a real problem for real users. If it doesn't move the needle, it doesn't ship.");
+    update_post_meta($about_page->ID, 'value_2_title', 'Radical Candor');
+    update_post_meta($about_page->ID, 'value_2_desc', "We tell clients what they need to hear, not just what they want to hear. Honest collaboration builds better products.");
+    update_post_meta($about_page->ID, 'value_3_title', 'Craft Over Hype');
+    update_post_meta($about_page->ID, 'value_3_desc', "We'd rather build it right than build it fast. Quality compounds over time and outlasts every trend.");
+    update_post_meta($about_page->ID, 'value_4_title', 'Access for All');
+    update_post_meta($about_page->ID, 'value_4_desc', "The web belongs to everyone. Accessibility and performance are non-negotiable baseline requirements.");
 
     $about_content = '<!-- wp:paragraph --><p>What started as two developers freelancing out of a co-working space has grown into a team of 10 specialists spanning design, engineering, and strategy. We built our first client site in 2016 for a Philadelphia coffee roaster who needed something better than a template. They\'re still a client today.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>We\'ve worked with startups finding product-market fit, mid-market companies scaling their digital presence, and enterprise organizations modernizing legacy platforms. The problems look different each time; the approach is the same.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Understand the business problem first, then build the right solution — not the trendiest one. We write clean code, ship on time, and pick up the phone when things break.</p><!-- /wp:paragraph --><!-- wp:list --><ul class="wp-block-list"><li><strong>120+ projects</strong> delivered across healthcare, e-commerce, SaaS, and education</li><li><strong>98% client satisfaction</strong> across all engagements</li><li><strong>15 industry awards</strong> including Awwwards Site of the Day (twice)</li></ul><!-- /wp:list -->';
 
@@ -440,12 +438,12 @@ if ($about_page) {
 $contact_page = get_page_by_path('contact');
 if ($contact_page) {
     wp_update_post(['ID' => $contact_page->ID, 'post_title' => 'Contact']);
-    update_field('contact_hero_headline',    "Let's build something together", $contact_page->ID);
-    update_field('contact_hero_subheadline', "Fill out the form below and we'll get back to you within one business day.", $contact_page->ID);
-    update_field('contact_email',  'hello@snazzysprocket.com', $contact_page->ID);
-    update_field('contact_phone',  '(215) 555-0147', $contact_page->ID);
-    update_field('contact_office', '1247 Market Street, Suite 400, Philadelphia, PA 19107', $contact_page->ID);
-    update_field('contact_hours',  'Monday – Friday, 9:00 AM – 6:00 PM EST', $contact_page->ID);
+    update_post_meta($contact_page->ID, 'contact_hero_headline', "Let's build something together");
+    update_post_meta($contact_page->ID, 'contact_hero_subheadline', "Fill out the form below and we'll get back to you within one business day.");
+    update_post_meta($contact_page->ID, 'contact_email', 'hello@snazzysprocket.com');
+    update_post_meta($contact_page->ID, 'contact_phone', '(215) 555-0147');
+    update_post_meta($contact_page->ID, 'contact_office', '1247 Market Street, Suite 400, Philadelphia, PA 19107');
+    update_post_meta($contact_page->ID, 'contact_hours', 'Monday – Friday, 9:00 AM – 6:00 PM EST');
 
     WP_CLI::success("Updated contact page ACF fields.");
 } else {

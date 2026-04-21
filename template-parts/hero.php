@@ -6,17 +6,15 @@ $headline    = get_field('hero_headline')    ?: 'We engineer websites that <span
 $subheadline = get_field('hero_subheadline') ?: 'Snazzy Sprocket crafts high-performance digital experiences for ambitious brands. Strategy, design, and engineering — all under one roof.';
 $cta_label   = get_field('hero_cta_label')  ?: 'View Our Work';
 $cta_url     = get_field('hero_cta_url')    ?: get_post_type_archive_link('case_study');
-$stats       = get_field('stats');
 
-// Default stats if none set in ACF
-if (empty($stats)) {
-    $stats = [
-        ['stat_number' => '120+', 'stat_label' => 'Projects Delivered'],
-        ['stat_number' => '98%',  'stat_label' => 'Client Satisfaction'],
-        ['stat_number' => '8 yrs', 'stat_label' => 'In Business'],
-        ['stat_number' => '15',   'stat_label' => 'Industry Awards'],
-    ];
-}
+$stat_1_number = get_field('stat_1_number') ?: '120+';
+$stat_1_label  = get_field('stat_1_label')  ?: 'Projects Delivered';
+$stat_2_number = get_field('stat_2_number') ?: '98%';
+$stat_2_label  = get_field('stat_2_label')  ?: 'Client Satisfaction';
+$stat_3_number = get_field('stat_3_number') ?: '8 yrs';
+$stat_3_label  = get_field('stat_3_label')  ?: 'In Business';
+$stat_4_number = get_field('stat_4_number') ?: '15';
+$stat_4_label  = get_field('stat_4_label')  ?: 'Industry Awards';
 ?>
 
 <section class="bg-ink min-h-[calc(100vh-64px)] flex items-center" aria-label="Hero">
@@ -40,25 +38,30 @@ if (empty($stats)) {
                     <a href="<?php echo esc_url($cta_url); ?>" class="btn-primary">
                         <?php echo esc_html($cta_label); ?> &rarr;
                     </a>
-                    <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn-ghost text-cloud hover:text-white">
+                    <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn-outline-white">
                         Start a Project
                     </a>
                 </div>
             </div>
 
             <!-- Right: stats -->
-            <?php if (!empty($stats)) : ?>
             <div class="grid grid-cols-1 gap-2" role="list" aria-label="Agency statistics">
-                <?php foreach ($stats as $stat) : ?>
-                <div class="bg-ink-light rounded-xl px-6 py-5 border border-white/5" role="listitem">
-                    <p class="font-display font-bold text-white text-4xl md:text-5xl leading-none mb-1">
+                <?php
+                $stats = [
+                    ['stat_number' => $stat_1_number, 'stat_label' => $stat_1_label],
+                    ['stat_number' => $stat_2_number, 'stat_label' => $stat_2_label],
+                    ['stat_number' => $stat_3_number, 'stat_label' => $stat_3_label],
+                    ['stat_number' => $stat_4_number, 'stat_label' => $stat_4_label],
+                ];
+                foreach ($stats as $stat) : ?>
+                <div class="bg-ink-light rounded-lg px-5 py-4 border border-white/5" role="listitem">
+                    <p class="font-display font-bold text-white text-2xl md:text-3xl leading-none mb-1">
                         <?php echo esc_html($stat['stat_number']); ?>
                     </p>
-                    <p class="text-muted text-sm"><?php echo esc_html($stat['stat_label']); ?></p>
+                    <p class="text-muted text-xs"><?php echo esc_html($stat['stat_label']); ?></p>
                 </div>
                 <?php endforeach; ?>
             </div>
-            <?php endif; ?>
 
         </div>
     </div>

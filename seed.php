@@ -318,6 +318,7 @@ foreach ($team_members as $index => $member) {
 // 4. Ensure required pages exist
 // ─────────────────────────────────────────────
 $required_pages = [
+    ['title' => 'Home',    'slug' => 'home',    'template' => ''],
     ['title' => 'About',   'slug' => 'about',   'template' => 'page-about.php'],
     ['title' => 'Contact', 'slug' => 'contact', 'template' => 'page-contact.php'],
 ];
@@ -330,14 +331,29 @@ foreach ($required_pages as $pg) {
             'post_name'   => $pg['slug'],
             'post_status' => 'publish',
             'post_type'   => 'page',
-            'page_template' => $pg['template'],
         ]);
-        update_post_meta($id, '_wp_page_template', $pg['template']);
-        WP_CLI::success("Created page: {$pg['title']} (ID: $id, template: {$pg['template']})");
+        if ($pg['template']) {
+            update_post_meta($id, '_wp_page_template', $pg['template']);
+        }
+        // Set Home as the static front page
+        if ($pg['slug'] === 'home') {
+            update_option('show_on_front', 'page');
+            update_option('page_on_front', $id);
+            WP_CLI::success("Created Home page and set as front page (ID: $id)");
+        } else {
+            WP_CLI::success("Created page: {$pg['title']} (ID: $id)");
+        }
     } else {
-        // Ensure template is assigned even if page already existed
-        update_post_meta($existing->ID, '_wp_page_template', $pg['template']);
-        WP_CLI::line("Updated template for: {$pg['title']} → {$pg['template']}");
+        if ($pg['template']) {
+            update_post_meta($existing->ID, '_wp_page_template', $pg['template']);
+        }
+        if ($pg['slug'] === 'home' && !get_option('page_on_front')) {
+            update_option('show_on_front', 'page');
+            update_option('page_on_front', $existing->ID);
+            WP_CLI::line("Set existing Home page as front page (ID: {$existing->ID})");
+        } else {
+            WP_CLI::line("Updated template for: {$pg['title']}");
+        }
     }
 }
 
@@ -359,14 +375,31 @@ if ($home_page) {
     update_field('hero_cta_label',   'View Our Work', $home_page->ID);
     update_field('hero_cta_url',     home_url('/case-studies'), $home_page->ID);
 
-    update_field('stats', [
-        ['stat_number' => '120+',  'stat_label' => 'Projects Delivered'],
-        ['stat_number' => '98%',   'stat_label' => 'Client Satisfaction'],
-        ['stat_number' => '8 yrs', 'stat_label' => 'In Business'],
-        ['stat_number' => '15',    'stat_label' => 'Industry Awards'],
-    ], $home_page->ID);
+    update_field('stat_1_number', '120+',  $home_page->ID);
+    update_field('stat_1_label',  'Projects Delivered', $home_page->ID);
+    update_field('stat_2_number', '98%',   $home_page->ID);
+    update_field('stat_2_label',  'Client Satisfaction', $home_page->ID);
+    update_field('stat_3_number', '8 yrs', $home_page->ID);
+    update_field('stat_3_label',  'In Business', $home_page->ID);
+    update_field('stat_4_number', '15',    $home_page->ID);
+    update_field('stat_4_label',  'Industry Awards', $home_page->ID);
+
+    update_field('service_1_title', 'UX & UI Design', $home_page->ID);
+    update_field('service_1_label',  'Research-driven design systems', $home_page->ID);
+    update_field('service_2_title', 'Custom Development', $home_page->ID);
+    update_field('service_2_label',  'Bespoke WordPress themes', $home_page->ID);
+    update_field('service_3_title', 'SEO & Strategy', $home_page->ID);
+    update_field('service_3_label',  'Data-backed strategies', $home_page->ID);
+    update_field('service_4_title', 'Managed Hosting', $home_page->ID);
+    update_field('service_4_label',  'Enterprise-grade hosting', $home_page->ID);
+    update_field('service_5_title', 'Responsive Engineering', $home_page->ID);
+    update_field('service_5_label',  'Mobile-first development', $home_page->ID);
+    update_field('service_6_title', 'Accessibility', $home_page->ID);
+    update_field('service_6_label',  'WCAG 2.1 AA compliance', $home_page->ID);
 
     seed_set_acf_image($home_page->ID, 'hero_bg_image', 'https://picsum.photos/seed/snazzy-hero/1600/900.jpg', 'Homepage hero background');
+
+    update_field('footer_tagline', 'High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.', $home_page->ID);
 
     WP_CLI::success("Updated homepage ACF fields (ID: {$home_page->ID})");
 } else {
@@ -407,6 +440,8 @@ if ($about_page) {
 // ─────────────────────────────────────────────
 $contact_page = get_page_by_path('contact');
 if ($contact_page) {
+    update_field('contact_hero_headline',    "Let's build something together", $contact_page->ID);
+    update_field('contact_hero_subheadline', 'Fill out the form below and we\'ll get back to you within one business day.', $contact_page->ID);
     update_field('contact_email',  'hello@snazzysprocket.com', $contact_page->ID);
     update_field('contact_phone',  '(215) 555-0147', $contact_page->ID);
     update_field('contact_office', '1247 Market Street, Suite 400, Philadelphia, PA 19107', $contact_page->ID);

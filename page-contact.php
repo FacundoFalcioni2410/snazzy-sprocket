@@ -17,6 +17,8 @@ $linkedin  = get_field('contact_linkedin')  ?: '#';
 $dribbble  = get_field('contact_dribbble')  ?: '#';
 
 $sent  = isset($_GET['sent']);
+$hero_headline    = get_field('contact_hero_headline')    ?: "Let's build something together";
+$hero_subheadline = get_field('contact_hero_subheadline') ?: 'Fill out the form below and we\'ll get back to you within one business day.';
 ?>
 
 <!-- ── Hero ─────────────────────────────────── -->
@@ -25,10 +27,10 @@ $sent  = isset($_GET['sent']);
         <p class="section-label">Contact</p>
         <h1 class="font-display font-extrabold text-white leading-[1.05]
                     text-4xl sm:text-5xl lg:text-6xl mb-6 max-w-xl">
-            Let's build something together
+            <?php echo esc_html($hero_headline); ?>
         </h1>
         <p class="text-cloud/60 text-base md:text-lg leading-relaxed max-w-md">
-            Fill out the form below and we'll get back to you within one business day.
+            <?php echo esc_html($hero_subheadline); ?>
         </p>
     </div>
 </section>

@@ -15,7 +15,11 @@
                         <span class="font-display font-bold text-white text-base tracking-tight">Snazzy Sprocket</span>
                     </a>
                     <p class="text-sm text-muted leading-relaxed max-w-xs">
-                        High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.
+                        <?php
+                        $front_page_id = get_option('page_on_front');
+                        $footer_tagline = $front_page_id ? get_field('footer_tagline', $front_page_id) : '';
+                        echo esc_html($footer_tagline ?: 'High-performance digital experiences for ambitious brands. Based in Philadelphia, working worldwide.');
+                        ?>
                     </p>
                 </div>
 
